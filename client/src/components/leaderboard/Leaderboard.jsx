@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search } from 'lucide-react';
 import LeaderboardCard from './LeaderboardCard';
@@ -7,120 +6,102 @@ import LeaderboardCard from './LeaderboardCard';
 const students = [
   {
     id: '1',
-    name: 'Emma Johnson',
-    department: 'Computer Science',
-    points: 2450,
+    name: 'Jeeva',
+    department: 'MCA',
+    points: 500,
     rank: 1,
     previousRank: 1,
     certificates: 18,
   },
   {
     id: '2',
-    name: 'Liam Smith',
-    department: 'Computer Science',
-    points: 2310,
+    name: 'Annisha',
+    department: 'MCA',
+    points: 350,
     rank: 2,
     previousRank: 3,
-    certificates: 16,
-  },
-  {
-    id: '3',
-    name: 'Olivia Davis',
-    department: 'Electrical Engineering',
-    points: 2180,
-    rank: 3,
-    previousRank: 2,
     certificates: 15,
   },
   {
-    id: '4',
-    name: 'Noah Wilson',
-    department: 'Computer Science',
-    points: 1980,
-    rank: 4,
-    previousRank: 5,
+    id: '3',
+    name: 'Jabastin',
+    department: 'MCA',
+    points: 300,
+    rank: 3,
+    previousRank: 4,
     certificates: 14,
   },
   {
+    id: '4',
+    name: 'Dharshini',
+    department: 'MCA',
+    points: 290,
+    rank: 4,
+    previousRank: 2,
+    certificates: 16,
+  },
+  {
     id: '5',
-    name: 'Ava Taylor',
-    department: 'Information Systems',
-    points: 1850,
+    name: 'Jegadeep',
+    department: 'MCA',
+    points: 280,
     rank: 5,
-    previousRank: 4,
+    previousRank: 5,
     certificates: 13,
   },
   {
     id: '6',
-    name: 'William Brown',
-    department: 'Data Science',
-    points: 1720,
+    name: 'Kaviarasu',
+    department: 'MCA',
+    points: 200,
     rank: 6,
-    previousRank: 7,
+    previousRank: 6,
     certificates: 12,
   },
   {
     id: '7',
-    name: 'Sophia Thomas',
-    department: 'Mechanical Engineering',
-    points: 1650,
+    name: 'Ajay kanna',
+    department: 'MCA',
+    points: 120,
     rank: 7,
-    previousRank: 6,
+    previousRank: 7,
     certificates: 11,
   },
   {
     id: '8',
-    name: 'James Miller',
-    department: 'Computer Science',
-    points: 1580,
+    name: 'Aravindh Samy',
+    department: 'MCA',
+    points: 80,
     rank: 8,
     previousRank: 10,
-    certificates: 10,
+    certificates: 8,
   },
   {
     id: '9',
-    name: 'Isabella Moore',
-    department: 'Information Systems',
-    points: 1450,
+    name: 'Dinesh',
+    department: 'MCA',
+    points: 70,
     rank: 9,
     previousRank: 8,
-    certificates: 9,
+    certificates: 10,
   },
   {
     id: '10',
-    name: 'Benjamin White',
-    department: 'Electrical Engineering',
-    points: 1380,
+    name: 'Dhanush',
+    department: 'MCA',
+    points: 50,
     rank: 10,
     previousRank: 9,
     certificates: 9,
   },
 ];
 
-const departments = [
-  { id: 'all', name: 'All Departments' },
-  { id: 'cs', name: 'Computer Science' },
-  { id: 'ee', name: 'Electrical Engineering' },
-  { id: 'is', name: 'Information Systems' },
-  { id: 'ds', name: 'Data Science' },
-  { id: 'me', name: 'Mechanical Engineering' },
-];
-
 const Leaderboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedDepartment, setSelectedDepartment] = useState('all');
 
-  const filteredStudents = students.filter(student => {
-    const matchesSearch = student.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesDepartment = selectedDepartment === 'all' || 
-                             (selectedDepartment === 'cs' && student.department === 'Computer Science') ||
-                             (selectedDepartment === 'ee' && student.department === 'Electrical Engineering') ||
-                             (selectedDepartment === 'is' && student.department === 'Information Systems') ||
-                             (selectedDepartment === 'ds' && student.department === 'Data Science') ||
-                             (selectedDepartment === 'me' && student.department === 'Mechanical Engineering');
-    
-    return matchesSearch && matchesDepartment;
-  });
+  const filteredStudents = students.filter(student => 
+    student.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="w-full space-y-8 animate-fade-in">
@@ -139,20 +120,6 @@ const Leaderboard = () => {
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 pr-4 py-2 w-full border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </div>
-        
-        <div className="flex items-center">
-          <select
-            value={selectedDepartment}
-            onChange={(e) => setSelectedDepartment(e.target.value)}
-            className="border border-gray-200 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {departments.map((department) => (
-              <option key={department.id} value={department.id}>
-                {department.name}
-              </option>
-            ))}
-          </select>
         </div>
       </div>
       

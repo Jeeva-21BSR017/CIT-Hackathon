@@ -5,6 +5,7 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/auth");
 const auth = require('./middleware/auth'); 
+const studentsRoute = require("./routes/Students");
 
 const app = express();
 app.use(express.json());
@@ -28,6 +29,7 @@ app.use("/api", chatRoute);
 app.use("/api", recommendationsRoute);
 app.use("/auth", authRoutes);
 app.use("/api", certificatesRoute);
+app.use("/api/leaderboard", studentsRoute);
 app.use('/uploads', express.static('uploads'));
 
 
