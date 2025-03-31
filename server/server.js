@@ -9,7 +9,7 @@ const auth = require('./middleware/auth');
 const app = express();
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:8080', // Allow requests from this origin
+    origin: 'http://localhost:8081', // Allow requests from this origin
     credentials: true, // Allow cookies and credentials
   }));
 
