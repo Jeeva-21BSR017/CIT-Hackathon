@@ -1,39 +1,48 @@
-const express = require("express");
-const { OpenAI } = require("openai"); // Correct import for newer versions
+const express = require('express');
 const router = express.Router();
+const OpenAI = require('openai');
+require('dotenv').config();
 
-// Initialize OpenAI with API key from .env
 const openai = new OpenAI({
-    apiKey: process.env.API_KEY, // Ensure this is set in your .env file
+  apiKey: process.env.API_KEY
 });
 
-// Endpoint for ChatGPT API calls
-router.post("/chat", async (req, res) => {
+router.post('/chat', async (req, res) => {
+  try {
     const { message } = req.body;
-
-    try {
-        const response = await openai.chat.completions.create({
-            model: "gpt-4o-mini", // Updated model name (ensure you have access)
-            messages: [
-                {
-                    role: "system",
-                    content:
-                        "You are a career advisor providing personalized learning and skill recommendations.",
-                },
-                { role: "user", content: message },
-            ],
-            max_tokens: 200,
-        });
-
-        if (!response.choices || response.choices.length === 0) {
-            return res.status(500).send("No response from ChatGPT");
+    console.log('Received message:', message);
+    console.log('Using API Key:', process.env.API_KEY ? 'Present' : 'Missing');
+    
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful AI assistant that provides clear and concise responses."
+        },
+        {
+          role: "user",
+          content: message
         }
+      ],
+      max_tokens: 150,
+      temperature: 0.7,
+    });
 
-        res.json({ reply: response.choices[0].message.content });
-    } catch (error) {
-        console.error("ChatGPT API error:", error.message);
-        res.status(500).send("Error communicating with ChatGPT");
-    }
+    const response = completion.choices[0].message.content;
+    console.log('OpenAI Response:', response);
+    res.json({ response });
+  } catch (error) {
+    console.error('Detailed Error:', {
+      message: error.message,
+      stack: error.stack,
+      response: error.response?.data
+    });
+    res.status(500).json({ 
+      error: 'Failed to process chat request',
+      details: error.message 
+    });
+  }
 });
 
 module.exports = router;

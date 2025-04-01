@@ -11,7 +11,7 @@ const ActivitySummary = ({ stats }) => {
           <Medal size={20} />
         </div>
         <div>
-          <p className="text-sm text-gray-500">Total Certificates</p>
+          <p className="text-sm text-gray-500">Total Activities</p>
           <p className="text-2xl font-semibold">{stats.totalCertificates}</p>
         </div>
       </GlassCard>
