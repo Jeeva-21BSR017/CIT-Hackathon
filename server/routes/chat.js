@@ -31,7 +31,7 @@ router.post('/chat', async (req, res) => {
 
     const response = completion.choices[0].message.content;
     console.log('OpenAI Response:', response);
-    res.json({ response });
+    res.json({ reply: response });
   } catch (error) {
     console.error('Detailed Error:', {
       message: error.message,

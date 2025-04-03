@@ -50,9 +50,44 @@ const Profile = () => {
 
   // Helper function to extract recommendations by label using regex
   const extractRecommendation = (text, label) => {
+    // First try the exact match with markdown
     const regex = new RegExp(`- \\*\\*${label}:\\*\\*\\s*(.*?)(?=\\n- \\*\\*|$)`, 'is');
-    const match = text.match(regex);
-    return match ? match[1].trim() : 'No recommendation available.';
+    let match = text.match(regex);
+    
+    if (!match) {
+      // Try without markdown
+      const simpleRegex = new RegExp(`${label}:\\s*(.*?)(?=\\n|$)`, 'i');
+      match = text.match(simpleRegex);
+    }
+    
+    if (!match) {
+      // Try to find any text after the label
+      const looseRegex = new RegExp(`${label}[^a-zA-Z0-9]*([^\\n]+)`, 'i');
+      match = text.match(looseRegex);
+    }
+
+    if (match) {
+      // Clean up any markdown formatting from the matched text
+      const cleanedText = match[1]
+        .replace(/\*\*/g, '') // Remove bold markdown
+        .replace(/\*/g, '')   // Remove italic markdown
+        .replace(/_/g, '')    // Remove underscore emphasis
+        .replace(/`/g, '')    // Remove code formatting
+        .trim();
+      return cleanedText;
+    }
+
+    // If no match found, return a contextual fallback based on the label
+    switch (label) {
+      case 'Next Step':
+        return 'Consider updating your profile with more details to get personalized recommendations.';
+      case 'Career Insight':
+        return 'Your career path can be enhanced with specific skills and experiences.';
+      case 'Skill Boost':
+        return 'Focus on developing both technical and soft skills relevant to your field.';
+      default:
+        return 'Personalized recommendation based on your profile and interests.';
+    }
   };
 
   // Fetch user data from backend
@@ -131,17 +166,38 @@ const Profile = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ message: prompt }),
         });
-        const data = await response.json();
-        if (data.reply) {
-          const reply = data.reply;
-          const nextStep = extractRecommendation(reply, 'Next Step');
-          const careerInsight = extractRecommendation(reply, 'Career Insight');
-          const skillBoost = extractRecommendation(reply, 'Skill Boost');
-          setAiSuggestions([nextStep, careerInsight, skillBoost]);
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const data = await response.json();
+        
+        if (data.error) {
+          throw new Error(data.error);
+        }
+
+        if (!data.reply) {
+          throw new Error('No reply received from the server');
+        }
+
+        const reply = data.reply;
+        const nextStep = extractRecommendation(reply, 'Next Step');
+        const careerInsight = extractRecommendation(reply, 'Career Insight');
+        const skillBoost = extractRecommendation(reply, 'Skill Boost');
+
+        if (!nextStep || !careerInsight || !skillBoost) {
+          throw new Error('Could not extract all recommendations from the response');
+        }
+
+        setAiSuggestions([nextStep, careerInsight, skillBoost]);
       } catch (error) {
         console.error('Error fetching AI suggestions:', error);
-        setAiSuggestions(['Error loading recommendations. Please try again later.']);
+        setAiSuggestions([
+          'Next Step: Consider updating your profile with more details to get personalized recommendations.',
+          'Career Insight: Your career path can be enhanced with specific skills and experiences.',
+          'Skill Boost: Focus on developing both technical and soft skills relevant to your field.'
+        ]);
       }
     };
 
